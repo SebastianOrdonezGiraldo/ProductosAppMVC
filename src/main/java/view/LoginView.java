@@ -1,40 +1,75 @@
 package view;
 
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.effect.DropShadow;
 
-public class LoginView extends GridPane {
+public class LoginView extends VBox {
     private TextField usernameField;
     private PasswordField passwordField;
     private Button loginButton;
 
     public LoginView() {
-        this.setPadding(new Insets(20));
-        this.setVgap(10);
-        this.setHgap(10);
-        Label usernameLabel = new Label("Usuario:");
-        usernameField = new TextField();
-        Label passwordLabel = new Label("Contraseña:");
-        passwordField = new PasswordField();
-        loginButton = new Button("Iniciar Sesión");
-        this.add(usernameLabel, 0, 0);
-        this.add(usernameField, 1, 0);
-        this.add(passwordLabel, 0, 1);
-        this.add(passwordField, 1, 1);
-        this.add(loginButton, 1, 2);
+        inicializarComponentes();
+        configurarEstilos();
+        organizarComponentes();
     }
 
-    public TextField getUsernameField() {
-        return usernameField;
+    private void inicializarComponentes() {
+        usernameField = new TextField();
+        passwordField = new PasswordField();
+        loginButton = new Button("INICIAR SESIÓN");
     }
-    public PasswordField getPasswordField() {
-        return passwordField;
+
+    private void configurarEstilos() {
+        this.setAlignment(Pos.CENTER);
+        this.setSpacing(20);
+        this.setPadding(new Insets(50));
+        this.setStyle("-fx-background-color: linear-gradient(to right, #2c3e50, #3498db);");
+
+        String fieldStyle = "-fx-background-color: transparent; -fx-border-color: white; " +
+                "-fx-border-width: 0 0 2 0; -fx-text-fill: white; " +
+                "-fx-prompt-text-fill: #cccccc;";
+        usernameField.setStyle(fieldStyle);
+        passwordField.setStyle(fieldStyle);
+        usernameField.setPromptText("Usuario");
+        passwordField.setPromptText("Contraseña");
+
+        loginButton.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; " +
+                "-fx-font-weight: bold; -fx-background-radius: 25;");
+
+        usernameField.setPrefHeight(40);
+        passwordField.setPrefHeight(40);
+        loginButton.setPrefHeight(50);
+
+        usernameField.setMaxWidth(300);
+        passwordField.setMaxWidth(300);
+        loginButton.setMaxWidth(300);
+
+        DropShadow shadow = new DropShadow();
+        shadow.setColor(Color.rgb(0, 0, 0, 0.3));
+        loginButton.setEffect(shadow);
     }
-    public Button getLoginButton() {
-        return loginButton;
+
+    private void organizarComponentes() {
+        Label titleLabel = new Label("Iniciar Sesión");
+        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 32));
+        titleLabel.setTextFill(Color.WHITE);
+
+        VBox formBox = new VBox(20);
+        formBox.setAlignment(Pos.CENTER);
+        formBox.getChildren().addAll(usernameField, passwordField, loginButton);
+
+        this.getChildren().addAll(titleLabel, formBox);
     }
+
+    // Getters
+    public TextField getUsernameField() { return usernameField; }
+    public PasswordField getPasswordField() { return passwordField; }
+    public Button getLoginButton() { return loginButton; }
 }
