@@ -3,6 +3,7 @@ module com.example.productosappmvc {
     requires javafx.fxml;
     requires java.desktop;
     requires java.sql;
+    requires mysql.connector.j;
 
 
     opens com.example.productosappmvc to javafx.fxml;
