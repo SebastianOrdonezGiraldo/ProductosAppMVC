@@ -1,16 +1,17 @@
 package controller;
 
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.stage.Stage;
 import view.LoginView;
+import view.ProductosView;
 
 public class LoginController {
     private LoginView loginView;
-
     public LoginController(LoginView loginView) {
         this.loginView = loginView;
         initializeListeners();
     }
-
     private void initializeListeners() {
         loginView.getLoginButton().setOnAction(e -> handleLogin());
     }
@@ -19,7 +20,8 @@ public class LoginController {
         String password = loginView.getPasswordField().getText();
         if ("HHHH".equals(username) && "1234*".equals(password)) {
             showAlert("Éxito", "Inicio de sesión exitoso", Alert.AlertType.INFORMATION);
-            // Aquí iría la lógica para abrir la siguiente ventana
+// Aquí iría la lógica para abrir la siguiente ventana
+            openProductosWindow();
         } else {
             showAlert("Error", "Usuario o contraseña incorrectos", Alert.AlertType.ERROR);
         }
@@ -31,5 +33,14 @@ public class LoginController {
         alert.setContentText(content);
         alert.showAndWait();
     }
-
+    private void openProductosWindow() {
+        ProductosView productosView = new ProductosView();
+        ProductosController productosController = new ProductosController(productosView);
+        Stage productosStage = new Stage();
+        productosStage.setTitle("Consulta de Productos");
+        productosStage.setScene(new Scene(productosView, 600, 400));
+        productosStage.show();
+// Cerrar la ventana de login
+        ((Stage) loginView.getScene().getWindow()).close();
+    }
 }
