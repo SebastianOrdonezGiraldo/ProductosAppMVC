@@ -6,18 +6,23 @@ import javafx.stage.Stage;
 import util.DatabaseConnection;
 import view.LoginView;
 import view.ProductosView;
+import view.RegistroView;
 
 import java.sql.*;
 
 public class LoginController {
     private LoginView loginView;
+
     public LoginController(LoginView loginView) {
         this.loginView = loginView;
         initializeListeners();
     }
+
     private void initializeListeners() {
         loginView.getLoginButton().setOnAction(e -> handleLogin());
+        loginView.getRegisterButton().setOnAction(e -> openRegistroWindow());
     }
+
     private void handleLogin() {
         try {
             validateLogin();
@@ -26,6 +31,7 @@ public class LoginController {
             showAlert("Error", "Error al conectar con la base de datos", Alert.AlertType.ERROR);
         }
     }
+
     private void showAlert(String title, String content, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
@@ -33,6 +39,7 @@ public class LoginController {
         alert.setContentText(content);
         alert.showAndWait();
     }
+
     private void openProductosWindow() {
         ProductosView productosView = new ProductosView();
         ProductosController productosController = new ProductosController(productosView);
@@ -40,7 +47,18 @@ public class LoginController {
         productosStage.setTitle("Consulta de Productos");
         productosStage.setScene(new Scene(productosView, 600, 400));
         productosStage.show();
-// Cerrar la ventana de login
+        // Cerrar la ventana de login
+        ((Stage) loginView.getScene().getWindow()).close();
+    }
+
+    private void openRegistroWindow() {
+        RegistroView registroView = new RegistroView();
+        RegistroController registroController = new RegistroController(registroView);
+        Stage registroStage = new Stage();
+        registroStage.setTitle("Registrar Cliente");
+        registroStage.setScene(new Scene(registroView, 600, 400));
+        registroStage.show();
+        // Cerrar la ventana de login
         ((Stage) loginView.getScene().getWindow()).close();
     }
 
@@ -54,8 +72,6 @@ public class LoginController {
         String password = loginView.getPasswordField().getText();
 
         // Preparar la consulta SQL para verificar las credenciales
-        // LOWER(SUBSTRING_INDEX(nombre, ' ', 1)) extrae el primer nombre y lo convierte a minúsculas
-        // DATE_FORMAT(fecha_nacimiento, '%m%d') formatea la fecha de nacimiento como MMDD
         String verifyLogin = "SELECT * FROM clientes WHERE LOWER(SUBSTRING_INDEX(nombre, ' ', 1)) = LOWER(?) AND DATE_FORMAT(fecha_nacimiento, '%m%d') = ?";
 
         try (PreparedStatement pstmt = connectDB.prepareStatement(verifyLogin)) {
@@ -84,4 +100,3 @@ public class LoginController {
         }
     }
 }
-
