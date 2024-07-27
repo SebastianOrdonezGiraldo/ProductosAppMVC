@@ -47,6 +47,9 @@ public class ProductosView extends VBox {
             tablaProductos.getColumns().addAll(colId, colNombre, colPrecio, colTipo, colUbicacion);
             this.setSpacing(10);
             this.getChildren().addAll(searchBox, btnConsultar, tablaProductos);
+        Label infoLabel = new Label("Trabajo realizado por: Sebastian Ordoñez | Ciudad: Armenia | Año: 2024");
+        infoLabel.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
+        this.getChildren().add(infoLabel);
     }
 
     private void inicializarComponentes() {

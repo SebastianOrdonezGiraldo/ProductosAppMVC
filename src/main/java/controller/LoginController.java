@@ -45,34 +45,41 @@ public class LoginController {
     }
 
     public void validateLogin() throws SQLException {
+        // Crear una conexión a la base de datos
         DatabaseConnection connectNow = new DatabaseConnection();
         Connection connectDB = connectNow.getConnection();
 
+        // Obtener el nombre de usuario y contraseña ingresados por el usuario
         String username = loginView.getUsernameField().getText();
         String password = loginView.getPasswordField().getText();
 
+        // Preparar la consulta SQL para verificar las credenciales
+        // LOWER(SUBSTRING_INDEX(nombre, ' ', 1)) extrae el primer nombre y lo convierte a minúsculas
+        // DATE_FORMAT(fecha_nacimiento, '%m%d') formatea la fecha de nacimiento como MMDD
         String verifyLogin = "SELECT * FROM clientes WHERE LOWER(SUBSTRING_INDEX(nombre, ' ', 1)) = LOWER(?) AND DATE_FORMAT(fecha_nacimiento, '%m%d') = ?";
 
         try (PreparedStatement pstmt = connectDB.prepareStatement(verifyLogin)) {
+            // Establecer los parámetros de la consulta preparada
             pstmt.setString(1, username);
             pstmt.setString(2, password);
 
+            // Ejecutar la consulta y obtener el resultado
             try (ResultSet resultSet = pstmt.executeQuery()) {
                 if (resultSet.next()) {
-
+                    // Si se encuentra un resultado, el login es exitoso
                     showAlert("Éxito", "Inicio de sesión exitoso", Alert.AlertType.INFORMATION);
                     openProductosWindow();
                 } else {
-
+                    // Si no se encuentra un resultado, las credenciales son incorrectas
                     showAlert("Error", "Usuario o contraseña incorrectos", Alert.AlertType.ERROR);
                 }
             }
         } catch (Exception e) {
-
+            // Capturar y manejar cualquier excepción que ocurra durante el proceso
             e.printStackTrace();
             showAlert("Error", "Error en la base de datos: " + e.getMessage(), Alert.AlertType.ERROR);
         } finally {
-            n
+            // Cerrar la conexión a la base de datos, independientemente del resultado
             connectDB.close();
         }
     }
