@@ -16,48 +16,37 @@ public class ProductosView extends VBox {
     private TextField txtNombre;
     private TextField txtPrecio;
     private TextField txtUbicacion;
+    private ComboBox<String> comboBoxConsultas;
 
     public ProductosView() {
-
-// Campos de búsqueda
-            txtNombre = new TextField();
-            txtNombre.setPromptText("Nombre");
-            txtPrecio = new TextField();
-            txtPrecio.setPromptText("Precio");
-            txtUbicacion = new TextField();
-            txtUbicacion.setPromptText("Ubicación");
-            HBox searchBox = new HBox(10);
-            searchBox.getChildren().addAll(
-                    new Label("Nombre:"), txtNombre,
-                    new Label("Precio:"), txtPrecio,
-                    new Label("Ubicación:"), txtUbicacion
-            );
-            btnConsultar = new Button("Consultar Productos");
-            tablaProductos = new TableView<>();
-            TableColumn<Producto, Number> colId = new TableColumn<>("ID");
-            colId.setCellValueFactory(cellData -> cellData.getValue().idProductoProperty());
-            TableColumn<Producto, String> colNombre = new TableColumn<>("Nombre");
-            colNombre.setCellValueFactory(cellData -> cellData.getValue().nombreProperty());
-            TableColumn<Producto, Number> colPrecio = new TableColumn<>("Precio");
-            colPrecio.setCellValueFactory(cellData -> cellData.getValue().precioProperty());
-            TableColumn<Producto, String> colTipo = new TableColumn<>("Tipo");
-            colTipo.setCellValueFactory(cellData -> cellData.getValue().tipoProperty());
-            TableColumn<Producto, String> colUbicacion = new TableColumn<>("Ubicación");
-            colUbicacion.setCellValueFactory(cellData -> cellData.getValue().ubicacionProperty());
-            tablaProductos.getColumns().addAll(colId, colNombre, colPrecio, colTipo, colUbicacion);
-            this.setSpacing(10);
-            this.getChildren().addAll(searchBox, btnConsultar, tablaProductos);
-        Label infoLabel = new Label("Trabajo realizado por: Sebastian Ordoñez | Ciudad: Armenia | Año: 2024");
-        infoLabel.setStyle("-fx-text-fill: black; -fx-font-size: 12px;");
-        this.getChildren().add(infoLabel);
+        inicializarComponentes();
+        configurarEstilos();
+        organizarComponentes();
     }
 
     private void inicializarComponentes() {
         txtNombre = new TextField();
+        txtNombre.setPromptText("Nombre");
         txtPrecio = new TextField();
+        txtPrecio.setPromptText("Precio");
         txtUbicacion = new TextField();
-        btnConsultar = new Button("CONSULTAR PRODUCTOS");
+        txtUbicacion.setPromptText("Ubicación");
+        btnConsultar = new Button("Consultar Productos");
         tablaProductos = new TableView<>();
+        comboBoxConsultas = new ComboBox<>();
+        comboBoxConsultas.getItems().addAll(
+                "Listar todos los productos, ordenados alfabéticamente por nombre",
+                "Mostrar los productos que tienen un precio superior a $10.000",
+                "Obtener los productos que pertenecen a la categoría 'Lácteos'",
+                "Listar los productos que se encuentran en el pasillo 2",
+                "Mostrar los 5 primeros productos de la lista",
+                "Consultar los productos que tienen un nombre que comienza con la letra 'A'",
+                "Buscar los productos que contienen la palabra 'Arroz' en su nombre",
+                "Obtener los productos que no tienen una ubicación específica",
+                "Listar los clientes ordenados por fecha de nacimiento de menor a mayor",
+                "Mostrar los clientes que nacieron en el año 1990 o posterior"
+        );
+        comboBoxConsultas.setValue("Seleccionar consulta");
     }
 
     private void configurarEstilos() {
@@ -89,6 +78,10 @@ public class ProductosView extends VBox {
         txtUbicacion.setMaxWidth(200);
         btnConsultar.setMaxWidth(300);
 
+        comboBoxConsultas.setPrefWidth(300);
+        comboBoxConsultas.setStyle("-fx-background-color: transparent; -fx-border-color: white; " +
+                "-fx-border-width: 0 0 2 0; -fx-text-fill: white;");
+
         DropShadow shadow = new DropShadow();
         shadow.setColor(Color.rgb(0, 0, 0, 0.3));
         btnConsultar.setEffect(shadow);
@@ -105,11 +98,15 @@ public class ProductosView extends VBox {
         searchBox.setAlignment(Pos.CENTER);
         searchBox.getChildren().addAll(txtNombre, txtPrecio, txtUbicacion);
 
+        HBox comboBoxBox = new HBox(20);
+        comboBoxBox.setAlignment(Pos.CENTER);
+        comboBoxBox.getChildren().addAll(new Label("Consulta:"), comboBoxConsultas);
+
         configurarTabla();
 
         VBox contentBox = new VBox(20);
         contentBox.setAlignment(Pos.CENTER);
-        contentBox.getChildren().addAll(searchBox, btnConsultar, tablaProductos);
+        contentBox.getChildren().addAll(comboBoxBox, searchBox, btnConsultar, tablaProductos);
 
         this.getChildren().addAll(titleLabel, contentBox);
     }
@@ -146,4 +143,5 @@ public class ProductosView extends VBox {
     public TextField getTxtUbicacion() { return txtUbicacion; }
     public TableView<Producto> getTablaProductos() { return tablaProductos; }
     public Button getBtnConsultar() { return btnConsultar; }
+    public ComboBox<String> getComboBoxConsultas() { return comboBoxConsultas; }
 }
