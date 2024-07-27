@@ -9,6 +9,7 @@ public class RegistroView extends VBox {
     private TextField nombreField;
     private TextField fechaNacimientoField;
     private Button registerButton;
+    private Button backButton;  // Nuevo botón
 
     public RegistroView() {
         inicializarComponentes();
@@ -20,6 +21,7 @@ public class RegistroView extends VBox {
         nombreField = new TextField();
         fechaNacimientoField = new TextField();
         registerButton = new Button("REGISTRARSE");
+        backButton = new Button("ATRÁS");  // Inicializar nuevo botón
     }
 
     private void configurarEstilos() {
@@ -38,14 +40,18 @@ public class RegistroView extends VBox {
 
         registerButton.setStyle("-fx-background-color: #34495e; -fx-text-fill: white; " +
                 "-fx-font-weight: bold; -fx-background-radius: 25;");
+        backButton.setStyle("-fx-background-color: #34495e; -fx-text-fill: white; " +
+                "-fx-font-weight: bold; -fx-background-radius: 25;");
 
         nombreField.setPrefHeight(40);
         fechaNacimientoField.setPrefHeight(40);
         registerButton.setPrefHeight(50);
+        backButton.setPrefHeight(50);
 
         nombreField.setMaxWidth(300);
         fechaNacimientoField.setMaxWidth(300);
         registerButton.setMaxWidth(300);
+        backButton.setMaxWidth(300);
     }
 
     private void organizarComponentes() {
@@ -54,7 +60,7 @@ public class RegistroView extends VBox {
 
         VBox formBox = new VBox(20);
         formBox.setAlignment(Pos.CENTER);
-        formBox.getChildren().addAll(nombreField, fechaNacimientoField, registerButton);
+        formBox.getChildren().addAll(nombreField, fechaNacimientoField, registerButton, backButton);
 
         VBox container = new VBox(20);
         container.setAlignment(Pos.CENTER);
@@ -69,4 +75,5 @@ public class RegistroView extends VBox {
     public TextField getNombreField() { return nombreField; }
     public TextField getFechaNacimientoField() { return fechaNacimientoField; }
     public Button getRegisterButton() { return registerButton; }
+    public Button getBackButton() { return backButton; }  // Nuevo getter
 }

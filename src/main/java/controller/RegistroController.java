@@ -21,6 +21,7 @@ public class RegistroController {
 
     private void initializeListeners() {
         registroView.getRegisterButton().setOnAction(e -> handleRegister());
+        registroView.getBackButton().setOnAction(e -> openLoginWindow());  // Manejar el botón "Atrás"
     }
 
     private void handleRegister() {
