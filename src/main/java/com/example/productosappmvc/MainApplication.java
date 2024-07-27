@@ -16,7 +16,7 @@ public class MainApplication extends Application {
             Class.forName("com.mysql.cj.jdbc.Driver");
             LoginView loginView = new LoginView();
             LoginController loginController = new LoginController(loginView);
-            Scene scene = new Scene(loginView, 500, 400);
+            Scene scene = new Scene(loginView, 520, 400);
             primaryStage.setTitle("Inicio de Sesión");
             primaryStage.setScene(scene);
             primaryStage.show();
