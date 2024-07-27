@@ -13,33 +13,25 @@ import java.sql.*;
 public class LoginController {
     private LoginView loginView;
 
-    // Constructor que recibe una instancia de LoginView y llama a initializeListeners
     public LoginController(LoginView loginView) {
         this.loginView = loginView;
         initializeListeners();
     }
 
-    // Configura los eventos de los botones en LoginView
     private void initializeListeners() {
-        // Configura el botón de login para que al hacer clic llame a handleLogin
         loginView.getLoginButton().setOnAction(e -> handleLogin());
-        // Configura el botón de registro para que al hacer clic llame a openRegistroWindow
         loginView.getRegisterButton().setOnAction(e -> openRegistroWindow());
     }
 
-    // Maneja el evento de login cuando el usuario hace clic en el botón de login
     private void handleLogin() {
         try {
-            // Llama al método que valida las credenciales de login
             validateLogin();
         } catch (SQLException e) {
             e.printStackTrace();
-            // Muestra una alerta en caso de error de conexión a la base de datos
             showAlert("Error", "Error al conectar con la base de datos", Alert.AlertType.ERROR);
         }
     }
 
-    // Muestra una alerta con el título, contenido y tipo especificado
     private void showAlert(String title, String content, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
@@ -48,7 +40,6 @@ public class LoginController {
         alert.showAndWait();
     }
 
-    // Abre una nueva ventana para la vista de productos y cierra la ventana de login
     private void openProductosWindow() {
         ProductosView productosView = new ProductosView();
         ProductosController productosController = new ProductosController(productosView);
@@ -56,23 +47,22 @@ public class LoginController {
         productosStage.setTitle("Consulta de Productos");
         productosStage.setScene(new Scene(productosView, 600, 400));
         productosStage.show();
-        // Cierra la ventana actual de login
+        // Cerrar la ventana de login
         ((Stage) loginView.getScene().getWindow()).close();
     }
 
-    // Abre una nueva ventana para la vista de registro y cierra la ventana de login
     private void openRegistroWindow() {
         RegistroView registroView = new RegistroView();
-        RegistroController registroController = new RegistroController(registroView);
         Stage registroStage = new Stage();
         registroStage.setTitle("Registrar Cliente");
         registroStage.setScene(new Scene(registroView, 600, 400));
+        // Pasar el Stage actual al RegistroController
+        RegistroController registroController = new RegistroController(registroView, registroStage);
         registroStage.show();
-        // Cierra la ventana actual de login
+        // Cerrar la ventana de login
         ((Stage) loginView.getScene().getWindow()).close();
     }
 
-    // Valida las credenciales del usuario con la base de datos
     public void validateLogin() throws SQLException {
         // Crear una conexión a la base de datos
         DatabaseConnection connectNow = new DatabaseConnection();
@@ -82,11 +72,11 @@ public class LoginController {
         String username = loginView.getUsernameField().getText();
         String password = loginView.getPasswordField().getText();
 
-        // Consulta SQL para verificar las credenciales del usuario
+        // Preparar la consulta SQL para verificar las credenciales
         String verifyLogin = "SELECT * FROM clientes WHERE LOWER(SUBSTRING_INDEX(nombre, ' ', 1)) = LOWER(?) AND DATE_FORMAT(fecha_nacimiento, '%m%d') = ?";
 
         try (PreparedStatement pstmt = connectDB.prepareStatement(verifyLogin)) {
-            // Establecer los parámetros de la consulta SQL
+            // Establecer los parámetros de la consulta preparada
             pstmt.setString(1, username);
             pstmt.setString(2, password);
 
@@ -95,7 +85,6 @@ public class LoginController {
                 if (resultSet.next()) {
                     // Si se encuentra un resultado, el login es exitoso
                     showAlert("Éxito", "Inicio de sesión exitoso", Alert.AlertType.INFORMATION);
-                    // Abrir la ventana de productos
                     openProductosWindow();
                 } else {
                     // Si no se encuentra un resultado, las credenciales son incorrectas

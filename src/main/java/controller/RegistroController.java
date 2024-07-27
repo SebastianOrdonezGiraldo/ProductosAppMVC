@@ -10,18 +10,24 @@ import view.RegistroView;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 
 public class RegistroController {
     private RegistroView registroView;
+    private Stage primaryStage; // Guardar la instancia de Stage
 
-    public RegistroController(RegistroView registroView) {
+    // Constructor actualizado para aceptar RegistroView y Stage
+    public RegistroController(RegistroView registroView, Stage primaryStage) {
         this.registroView = registroView;
+        this.primaryStage = primaryStage; // Guardar la instancia de Stage
         initializeListeners();
     }
 
     private void initializeListeners() {
         registroView.getRegisterButton().setOnAction(e -> handleRegister());
-        registroView.getBackButton().setOnAction(e -> openLoginWindow());  // Manejar el botón "Atrás"
+        registroView.getBackButton().setOnAction(e -> openLoginWindow()); // Configurar el botón "Atrás"
     }
 
     private void handleRegister() {
@@ -45,14 +51,38 @@ public class RegistroController {
         DatabaseConnection connectNow = new DatabaseConnection();
         Connection connectDB = connectNow.getConnection();
 
-        String nombre = registroView.getNombreField().getText();
-        String fechaNacimiento = registroView.getFechaNacimientoField().getText();
+        String nombre = registroView.getNombreField().getText().trim();
+        String fechaNacimientoStr = registroView.getFechaNacimientoField().getText().trim();
+
+        // Validar que el nombre no esté vacío y sea un nombre propio
+        if (nombre.isEmpty()) {
+            showAlert("Error", "El nombre no puede estar vacío", Alert.AlertType.ERROR);
+            return;
+        }
+
+        // Validar la fecha de nacimiento y verificar que el cliente sea mayor de edad
+        LocalDate fechaNacimiento;
+        try {
+            fechaNacimiento = LocalDate.parse(fechaNacimientoStr, DateTimeFormatter.ISO_LOCAL_DATE);
+        } catch (Exception e) {
+            showAlert("Error", "La fecha de nacimiento debe estar en formato YYYY-MM-DD", Alert.AlertType.ERROR);
+            return;
+        }
+
+        // Calcular la edad del cliente
+        LocalDate hoy = LocalDate.now();
+        Period edad = Period.between(fechaNacimiento, hoy);
+
+        if (edad.getYears() < 18) {
+            showAlert("Error", "Debe ser mayor de edad para registrarse", Alert.AlertType.ERROR);
+            return;
+        }
 
         // Comprobar si el cliente ya está registrado
         String checkCliente = "SELECT COUNT(*) FROM clientes WHERE nombre = ? AND fecha_nacimiento = ?";
         try (PreparedStatement checkStmt = connectDB.prepareStatement(checkCliente)) {
             checkStmt.setString(1, nombre);
-            checkStmt.setString(2, fechaNacimiento);
+            checkStmt.setDate(2, java.sql.Date.valueOf(fechaNacimiento)); // Convertir LocalDate a java.sql.Date
 
             try (ResultSet rs = checkStmt.executeQuery()) {
                 if (rs.next() && rs.getInt(1) > 0) {
@@ -66,26 +96,21 @@ public class RegistroController {
         String insertCliente = "INSERT INTO clientes (nombre, fecha_nacimiento) VALUES (?, ?)";
         try (PreparedStatement insertStmt = connectDB.prepareStatement(insertCliente)) {
             insertStmt.setString(1, nombre);
-            insertStmt.setString(2, fechaNacimiento);
+            insertStmt.setDate(2, java.sql.Date.valueOf(fechaNacimiento)); // Convertir LocalDate a java.sql.Date
             insertStmt.executeUpdate();
             showAlert("Éxito", "Cliente registrado exitosamente", Alert.AlertType.INFORMATION);
-
-            // Abrir la ventana de inicio de sesión y cerrar la ventana de registro
-            openLoginWindow();
         } finally {
             connectDB.close();
         }
     }
 
+    // Abre la ventana de inicio de sesión y cierra la ventana de registro
     private void openLoginWindow() {
+        // Crear y mostrar la ventana de inicio de sesión
         LoginView loginView = new LoginView();
         LoginController loginController = new LoginController(loginView);
-        Stage loginStage = new Stage();
-        loginStage.setTitle("Inicio de Sesión");
-        loginStage.setScene(new Scene(loginView, 600, 400));
-        loginStage.show();
-
-        // Cerrar la ventana de registro
-        ((Stage) registroView.getScene().getWindow()).close();
+        Scene loginScene = new Scene(loginView, 600, 400);
+        primaryStage.setScene(loginScene);
+        primaryStage.setTitle("Inicio de Sesión");
     }
 }

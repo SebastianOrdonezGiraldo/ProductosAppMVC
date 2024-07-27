@@ -9,7 +9,7 @@ public class RegistroView extends VBox {
     private TextField nombreField;
     private TextField fechaNacimientoField;
     private Button registerButton;
-    private Button backButton;  // Nuevo botón
+    private Button backButton; // Añadido para el botón "Atrás"
 
     public RegistroView() {
         inicializarComponentes();
@@ -21,7 +21,7 @@ public class RegistroView extends VBox {
         nombreField = new TextField();
         fechaNacimientoField = new TextField();
         registerButton = new Button("REGISTRARSE");
-        backButton = new Button("ATRÁS");  // Inicializar nuevo botón
+        backButton = new Button("ATRÁS"); // Inicializar el botón "Atrás"
     }
 
     private void configurarEstilos() {
@@ -40,7 +40,8 @@ public class RegistroView extends VBox {
 
         registerButton.setStyle("-fx-background-color: #34495e; -fx-text-fill: white; " +
                 "-fx-font-weight: bold; -fx-background-radius: 25;");
-        backButton.setStyle("-fx-background-color: #34495e; -fx-text-fill: white; " +
+
+        backButton.setStyle("-fx-background-color: #2c3e50; -fx-text-fill: white; " +
                 "-fx-font-weight: bold; -fx-background-radius: 25;");
 
         nombreField.setPrefHeight(40);
@@ -75,5 +76,5 @@ public class RegistroView extends VBox {
     public TextField getNombreField() { return nombreField; }
     public TextField getFechaNacimientoField() { return fechaNacimientoField; }
     public Button getRegisterButton() { return registerButton; }
-    public Button getBackButton() { return backButton; }  // Nuevo getter
+    public Button getBackButton() { return backButton; } // Getter para el botón "Atrás"
 }
